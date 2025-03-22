@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace lms.Models
 {
-    [Index(nameof(StudentId), nameof(CourseId), IsUnique = true)] // Unique index on StudentId and CourseId
+    [Index(nameof(StudentId), nameof(CourseId), IsUnique = true)]
     public class CartItem
     {
         [Key]
@@ -16,7 +12,7 @@ namespace lms.Models
 
         [ForeignKey("Student")]
         public int StudentId { get; set; }
-        public Student Student { get; set; }
+        public ApplicationUser Student { get; set; } // Thay bằng ApplicationUser
 
         [ForeignKey("Course")]
         public int CourseId { get; set; }
