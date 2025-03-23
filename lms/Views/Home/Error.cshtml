@@ -1,0 +1,9 @@
+@model lms.Models.ErrorViewModel
+
+<h1>Lỗi</h1>
+
+<p>Đã xảy ra lỗi trong quá trình xử lý yêu cầu của bạn.</p>
+@if (Model.ShowRequestId)
+{
+    <p><strong>Request ID:</strong> @Model.RequestId</p>
+}

@@ -1,26 +1,24 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using lms.Models;
+using lms.Interfaces;
+using System.Threading.Tasks;
 
 namespace lms.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ICourseRepository _courseRepository;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ICourseRepository courseRepository)
     {
-        _logger = logger;
+        _courseRepository = courseRepository;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
+        var courses = await _courseRepository.GetAllAsync();
+        return View(courses);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
