@@ -1,9 +1,0 @@
-Repository:
-ICourseRepository, EFCourseRepository: Quản lý khóa học và hình ảnh.
-ICartItemRepository, EFCartItemRepository: Quản lý giỏ hàng.
-IStudentCourseRepository, EFStudentCourseRepository: Quản lý khóa học đã đăng ký.
-
-Controller:
-CourseController: CRUD khóa học với upload hình ảnh (đã làm một phần trước đó).
-CartController: Thêm/xóa khóa học vào giỏ hàng.
-StudentCourseController: Quản lý đăng ký khóa học.
