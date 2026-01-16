@@ -17,6 +17,8 @@ namespace LMS.Infrastructure
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
+            // Register other infrastructure services like repositories, etc.
+
             return services;
         }
     }
