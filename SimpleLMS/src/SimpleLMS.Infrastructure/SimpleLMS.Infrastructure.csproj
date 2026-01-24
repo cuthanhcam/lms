@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleLMS.Application\SimpleLMS.Application.csproj" />
+    <ProjectReference Include="..\SimpleLMS.Domain\SimpleLMS.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

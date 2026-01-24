@@ -15,6 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SimpleLMS.Application\SimpleLMS.Application.csproj" />
+    <ProjectReference Include="..\..\src\SimpleLMS.Domain\SimpleLMS.Domain.csproj" />
+    <ProjectReference Include="..\..\src\SimpleLMS.Infrastructure\SimpleLMS.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
