@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SimpleLMS.API/SimpleLMS.API.csproj" />
+    <Project Path="src/SimpleLMS.Application/SimpleLMS.Application.csproj" />
+    <Project Path="src/SimpleLMS.Domain/SimpleLMS.Domain.csproj" />
+    <Project Path="src/SimpleLMS.Infrastructure/SimpleLMS.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SimpleLMS.Tests/SimpleLMS.Tests.csproj" />
+  </Folder>
+</Solution>
