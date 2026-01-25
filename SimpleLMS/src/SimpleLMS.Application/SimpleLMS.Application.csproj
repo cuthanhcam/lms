@@ -10,4 +10,8 @@
     <ProjectReference Include="..\SimpleLMS.Domain\SimpleLMS.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\Common\" />
+  </ItemGroup>
+
 </Project>
