@@ -10,4 +10,15 @@
     <ProjectReference Include="..\SimpleLMS.Domain\SimpleLMS.Domain.csproj" />
   </ItemGroup>
 
+	
+	
+  <ItemGroup>
+    <Folder Include="DTOs\Common\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.0.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+  </ItemGroup>
+
 </Project>
