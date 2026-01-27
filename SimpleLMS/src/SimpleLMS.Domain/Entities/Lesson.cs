@@ -41,19 +41,16 @@ namespace SimpleLMS.Domain.Entities
         }
 
         // Update info for the lesson
-        public void UpdateInfo(string title, string? content, string? videoUrl, int order, int durationMinutes)
+        public void UpdateInfo(string title, string? content, string? videoUrl, int durationMinutes)
         {
             if (string.IsNullOrWhiteSpace(title))
                 throw new BusinessRuleViolationException("Title cannot be null or empty.", nameof(title));
-            if (order < 1)
-                throw new BusinessRuleViolationException("Order must be greater than zero.", nameof(order));
             if (durationMinutes < 0)
                 throw new BusinessRuleViolationException("Duration must be non-negative.", nameof(durationMinutes));
             
             Title = title;
             Content = content;
             VideoUrl = videoUrl;
-            Order = order;
             DurationMinutes = durationMinutes;
             MarkAsModified();
         }
