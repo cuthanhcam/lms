@@ -14,10 +14,28 @@ namespace SimpleLMS.Infrastructure.Repositories
         {
         }
 
+        public override async Task<Course?> GetByIdAsync(Guid id)
+        {
+            return await _dbSet
+                .Include(c => c.Instructor)
+                .Include(c => c.Lessons)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public override async Task<IEnumerable<Course>> GetAllAsync()
+        {
+            return await _dbSet
+                .Include(c => c.Instructor)
+                .Include(c => c.Lessons)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Course>> GetPublishedCoursesAsync()
         {
             return await _dbSet
                 .Include(c => c.Instructor)
+                .Include(c => c.Lessons)
                 .Where(c => c.IsPublished)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
@@ -27,6 +45,7 @@ namespace SimpleLMS.Infrastructure.Repositories
         {
             return await _dbSet
                 .Include(c => c.Instructor)
+                .Include(c => c.Lessons)
                 .Where(c => c.InstructorId == instructorId)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
