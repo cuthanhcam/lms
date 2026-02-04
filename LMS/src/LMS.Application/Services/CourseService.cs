@@ -161,7 +161,8 @@ namespace LMS.Application.Services
                 CreatedByName = course.CreatedByUser?.UserName ?? "Unknown",
                 IsPublished = course.IsPublished,
                 CreatedAt = course.CreatedAt,
-                TotalLessons = course.Lessons.Count
+                // Only count non-deleted lessons
+                TotalLessons = course.Lessons?.Count(l => !l.IsDeleted) ?? 0
             };
         }
     }

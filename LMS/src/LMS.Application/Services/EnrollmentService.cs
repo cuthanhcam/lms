@@ -24,6 +24,11 @@ namespace LMS.Application.Services
                 throw new NotFoundException(nameof(Course), courseId);
             }
 
+            if (course.IsDeleted)
+            {
+                throw new BadRequestException("Cannot enroll in deleted course");
+            }
+
             if (!course.IsPublished)
             {
                 throw new BadRequestException("Cannot enroll in unpublished course");
@@ -61,7 +66,8 @@ namespace LMS.Application.Services
                 CourseDescription = course.Description,
                 CoursePrice = course.Price.Amount,
                 EnrollAt = enrollment.EnrollAt,
-                TotalLessons = course.Lessons.Count
+                // Only count non-deleted lessons
+                TotalLessons = course.Lessons?.Count(l => !l.IsDeleted) ?? 0
             };
         }
     }
