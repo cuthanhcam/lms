@@ -103,6 +103,11 @@ namespace LMS.Infrastructure.Data.Configurations
             // ==================== IGNORE PROPERTIES ====================
             // Domain events are not persisted to database
             builder.Ignore(c => c.DomainEvents);
+            builder.HasQueryFilter(c => !c.IsDeleted);
+
+            // ==================== IGNORE PROPERTIES ====================
+            // Domain events are not persisted to database
+            builder.Ignore(c => c.DomainEvents);
         }
     }
 }

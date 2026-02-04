@@ -1,8 +1,10 @@
 ﻿using LMS.Application.Interfaces.Identity;
 using LMS.Application.Interfaces.Repositories;
 using LMS.Domain.Common;
+using LMS.Domain.Events;
 using LMS.Infrastructure.Data;
 using LMS.Infrastructure.Events;
+using LMS.Infrastructure.Events.Handlers;
 using LMS.Infrastructure.Identity;
 using LMS.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -41,10 +43,9 @@ namespace LMS.Infrastructure
             
             services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 
-            // TODO: Register domain event handlers here
-            // Example:
-            // services.AddScoped<IDomainEventHandler<CoursePublishedEvent>, CoursePublishedEventHandler>();
-            // services.AddScoped<IDomainEventHandler<EnrollmentCreatedEvent>, EnrollmentCreatedEventHandler>();
+            // Register domain event handlers
+            services.AddScoped<IDomainEventHandler<CoursePublishedEvent>, CoursePublishedEventHandler>();
+            services.AddScoped<IDomainEventHandler<EnrollmentCreatedEvent>, EnrollmentCreatedEventHandler>();
 
             return services;
         }

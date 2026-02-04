@@ -87,7 +87,8 @@ namespace LMS.Infrastructure.Repositories
                 .Include(c => c.Lessons)
                 .FirstOrDefaultAsync(c => c.Id == courseId);
 
-            return course != null && course.Lessons.Any();
+            // Only count non-deleted lessons
+            return course != null && course.Lessons.Any(l => !l.IsDeleted);
         }
     }
 }

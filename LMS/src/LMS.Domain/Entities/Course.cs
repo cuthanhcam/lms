@@ -187,7 +187,7 @@ namespace LMS.Domain.Entities
         /// Publish the course to make it visible to students
         /// 
         /// Business rules:
-        /// - Course must have at least one lesson
+        /// - Course must have at least one non-deleted lesson
         /// - Course must not be deleted
         /// - Course must not be already published
         /// </summary>
@@ -201,19 +201,20 @@ namespace LMS.Domain.Entities
             if (IsDeleted)
                 throw new DomainException("Cannot publish deleted course");
 
-            // Check if has lessons
-            if (!_lessons.Any())
+            // Check if has non-deleted lessons
+            var activeLessons = _lessons.Where(l => !l.IsDeleted).ToList();
+            if (!activeLessons.Any())
                 throw new DomainException("Cannot publish course without lessons");
 
             // Publish course
             IsPublished = true;
 
-            // Raise domain event
+            // Raise domain event with count of active lessons only
             AddDomainEvent(new CoursePublishedEvent(
                 courseId: Id,
                 courseTitle: Title,
                 instructorId: CreatedBy,
-                lessonCount: _lessons.Count
+                lessonCount: activeLessons.Count
             ));
         }
 
