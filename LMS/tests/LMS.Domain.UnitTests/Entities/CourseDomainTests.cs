@@ -3,7 +3,7 @@ using LMS.Domain.Entities;
 using LMS.Domain.Exceptions;
 using LMS.Domain.ValueObjects;
 
-namespace LMS.Application.UnitTests.Domain.Entities;
+namespace LMS.Domain.UnitTests.Entities;
 
 public class CourseDomainTests
 {

@@ -2,7 +2,7 @@ using FluentAssertions;
 using LMS.Domain.Exceptions;
 using LMS.Domain.ValueObjects;
 
-namespace LMS.Application.UnitTests.Domain.ValueObjects;
+namespace LMS.Domain.UnitTests.ValueObjects;
 
 public class EmailTests
 {

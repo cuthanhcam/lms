@@ -38,7 +38,7 @@ The repository is designed to help you:
 Current quality state:
 
 - Build: successful
-- Tests: fully passing across monorepo (124/124)
+- Tests: fully passing across monorepo (146/146)
 
 ### LMS.Web (Frontend)
 
@@ -77,7 +77,9 @@ lms/
 |  |  `- LMS.Shared/
 |  `- tests/
 |     |- LMS.API.IntegrationTests/
-|     `- LMS.Application.UnitTests/
+|     |- LMS.Application.UnitTests/
+|     |- LMS.Domain.UnitTests/
+|     `- LMS.Infrastructure.IntegrationTests/
 |- SimpleLMS/
 |  |- src/
 |  |  |- SimpleLMS.API/
@@ -143,9 +145,9 @@ The following checks were executed from the repository root:
 
 Test verification:
 
-- `LMS`: 33/33 tests passed.
+- `LMS`: 55/55 tests passed.
 - `SimpleLMS`: 91/91 tests passed.
-- Monorepo total: 124/124 tests passed.
+- Monorepo total: 146/146 tests passed.
 
 Interpretation:
 
@@ -163,7 +165,7 @@ Security and quality hardening completed in the latest backend pass:
 Current result:
 
 - No vulnerable packages reported for `SimpleLMS` projects.
-- Full test suite remains green (`124/124`).
+- Full test suite remains green (`146/146`).
 
 ## Database Setup
 
@@ -184,6 +186,8 @@ Run tests per implementation:
 ```powershell
 # LMS
 dotnet test .\LMS\tests\LMS.Application.UnitTests\LMS.Application.UnitTests.csproj -c Release
+dotnet test .\LMS\tests\LMS.Domain.UnitTests\LMS.Domain.UnitTests.csproj -c Release
+dotnet test .\LMS\tests\LMS.Infrastructure.IntegrationTests\LMS.Infrastructure.IntegrationTests.csproj -c Release
 dotnet test .\LMS\tests\LMS.API.IntegrationTests\LMS.API.IntegrationTests.csproj -c Release
 
 # SimpleLMS (requires .NET 10 SDK)

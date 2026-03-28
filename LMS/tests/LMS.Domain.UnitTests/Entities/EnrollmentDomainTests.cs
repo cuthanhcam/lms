@@ -2,7 +2,7 @@ using FluentAssertions;
 using LMS.Domain.Entities;
 using LMS.Domain.Exceptions;
 
-namespace LMS.Application.UnitTests.Domain.Entities;
+namespace LMS.Domain.UnitTests.Entities;
 
 public class EnrollmentDomainTests
 {
