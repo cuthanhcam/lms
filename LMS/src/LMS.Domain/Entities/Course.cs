@@ -229,7 +229,10 @@ namespace LMS.Domain.Entities
 
             IsPublished = false;
 
-            // TODO: Raise domain event - CourseUnpublished
+            AddDomainEvent(new CourseUnpublishedEvent(
+                courseId: Id,
+                courseTitle: Title,
+                instructorId: CreatedBy));
         }
 
         /// <summary>

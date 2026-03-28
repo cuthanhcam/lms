@@ -48,6 +48,10 @@ namespace LMS.Infrastructure.Data.Configurations
                 .HasForeignKey(e => e.CourseId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Mirror Course soft-delete filter on dependent side to avoid
+            // required-relationship warnings when principal rows are filtered.
+            builder.HasQueryFilter(e => !e.Course!.IsDeleted);
+
             // ==================== INDEXES ====================
 
             // Unique constraint: User can only enroll once per course

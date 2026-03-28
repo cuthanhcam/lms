@@ -38,7 +38,7 @@ The repository is designed to help you:
 Current quality state:
 
 - Build: successful
-- Tests: partially passing (65/91 passed; 26 failing)
+- Tests: fully passing across monorepo (146/146)
 
 ### LMS.Web (Frontend)
 
@@ -77,7 +77,9 @@ lms/
 |  |  `- LMS.Shared/
 |  `- tests/
 |     |- LMS.API.IntegrationTests/
-|     `- LMS.Application.UnitTests/
+|     |- LMS.Application.UnitTests/
+|     |- LMS.Domain.UnitTests/
+|     `- LMS.Infrastructure.IntegrationTests/
 |- SimpleLMS/
 |  |- src/
 |  |  |- SimpleLMS.API/
@@ -97,7 +99,8 @@ lms/
 - Entity Framework Core
 - SQL Server
 - xUnit (tests)
-- FluentValidation and AutoMapper (in applicable projects)
+- FluentValidation (LMS)
+- Manual DTO mapping in SimpleLMS (AutoMapper removed during hardening)
 
 ## Prerequisites
 
@@ -110,7 +113,7 @@ Install the following before running locally:
 Notes:
 
 - `LMS/global.json` pins SDK `8.0.416`.
-- `SimpleLMS/global.json` pins SDK `10.0.102`.
+- `SimpleLMS/global.json` pins SDK `10.0.201` with `rollForward: latestFeature`.
 - If only .NET 8 is installed, `SimpleLMS` cannot be built and will fail with `NETSDK1045`.
 
 ## Quick Start
@@ -142,13 +145,27 @@ The following checks were executed from the repository root:
 
 Test verification:
 
-- `LMS`: 28/28 tests passed.
-- `SimpleLMS`: 65/91 tests passed (26 failing).
+- `LMS`: 55/55 tests passed.
+- `SimpleLMS`: 91/91 tests passed.
+- Monorepo total: 146/146 tests passed.
 
 Interpretation:
 
-- LMS is in a stable state for backend-first commits.
-- SimpleLMS is buildable but not fully complete yet because of failing tests.
+- Both LMS and SimpleLMS are currently in a stable, fully passing test state.
+
+## Hardening Status
+
+Security and quality hardening completed in the latest backend pass:
+
+- Removed vulnerable AutoMapper dependency from SimpleLMS application layer.
+- Replaced AutoMapper usage with explicit mapping in service layer.
+- Added explicit DI abstractions package to keep dependency graph clear.
+- Re-audited packages with `dotnet list package --vulnerable --include-transitive`.
+
+Current result:
+
+- No vulnerable packages reported for `SimpleLMS` projects.
+- Full test suite remains green (`146/146`).
 
 ## Database Setup
 
@@ -169,6 +186,8 @@ Run tests per implementation:
 ```powershell
 # LMS
 dotnet test .\LMS\tests\LMS.Application.UnitTests\LMS.Application.UnitTests.csproj -c Release
+dotnet test .\LMS\tests\LMS.Domain.UnitTests\LMS.Domain.UnitTests.csproj -c Release
+dotnet test .\LMS\tests\LMS.Infrastructure.IntegrationTests\LMS.Infrastructure.IntegrationTests.csproj -c Release
 dotnet test .\LMS\tests\LMS.API.IntegrationTests\LMS.API.IntegrationTests.csproj -c Release
 
 # SimpleLMS (requires .NET 10 SDK)
@@ -187,8 +206,8 @@ Recommended scope for backend-first commits:
 ### Phase 1: Stabilize backend baseline
 
 - Keep LMS test suite green on every change
-- Resolve SimpleLMS failing tests and align domain behavior with expected specs
-- Address package health warnings and dependency updates
+- Keep SimpleLMS test suite green and aligned with domain behavior
+- Continue periodic dependency health scans
 
 ### Phase 2: Improve architecture consistency
 

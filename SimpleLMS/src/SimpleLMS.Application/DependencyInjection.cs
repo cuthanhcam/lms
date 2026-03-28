@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SimpleLMS.Application.Interfaces.Services;
-using SimpleLMS.Application.Mappings;
 using SimpleLMS.Application.Services;
 using System;
 using System.Collections.Generic;
@@ -15,12 +14,6 @@ namespace SimpleLMS.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            // AutoMapper
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile<MappingProfile>();
-            });
-
             // Services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICourseService, CourseService>();

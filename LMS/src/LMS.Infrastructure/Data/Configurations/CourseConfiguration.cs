@@ -1,5 +1,4 @@
 using LMS.Domain.Entities;
-using LMS.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -98,11 +97,6 @@ namespace LMS.Infrastructure.Data.Configurations
 
             // ==================== QUERY FILTERS ====================
             // Global query filter for soft delete
-            builder.HasQueryFilter(c => !c.IsDeleted);
-
-            // ==================== IGNORE PROPERTIES ====================
-            // Domain events are not persisted to database
-            builder.Ignore(c => c.DomainEvents);
             builder.HasQueryFilter(c => !c.IsDeleted);
 
             // ==================== IGNORE PROPERTIES ====================

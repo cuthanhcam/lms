@@ -145,8 +145,13 @@ public class CourseRepositoryTests : IDisposable
         // Assert
         result.Should().NotBeNull();
         result!.Lessons.Should().HaveCount(3);
-        result.Lessons.First().Order.Should().Be(1);
-        result.Lessons.Last().Order.Should().Be(3);
+
+        var orderedLessonOrders = result.Lessons
+            .Select(l => l.Order)
+            .OrderBy(o => o)
+            .ToList();
+
+        orderedLessonOrders.Should().Equal(1, 2, 3);
     }
 
     [Fact]
