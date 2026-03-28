@@ -25,7 +25,7 @@ namespace LMS.API.IntegrationTests.Controllers
         #region Register Tests
 
         /// <summary>
-        /// Test: Register v?i th�ng tin h?p l? ph?i tr? v? 200 OK v� token
+        /// Test: Register with valid information should return 200 OK and token
         /// </summary>
         [Fact]
         public async Task Register_WithValidRequest_ShouldReturn200WithToken()
@@ -55,12 +55,12 @@ namespace LMS.API.IntegrationTests.Controllers
         }
 
         /// <summary>
-        /// Test: Register v?i email ?� t?n t?i ph?i tr? v? 400 Bad Request
+        /// Test: Register with existing email should return 400 Bad Request
         /// </summary>
         [Fact]
         public async Task Register_WithDuplicateEmail_ShouldReturn400()
         {
-            // Arrange - Register user ??u ti�n
+            // Arrange - Register first user
             var firstRequest = new RegisterRequest
             {
                 UserName = "user1",
@@ -71,11 +71,11 @@ namespace LMS.API.IntegrationTests.Controllers
 
             await _client.PostAsJsonAsync("/api/auth/register", firstRequest);
 
-            // Register user th? 2 v?i c�ng email
+            // Register second user with the same email
             var secondRequest = new RegisterRequest
             {
                 UserName = "user2",
-                Email = "duplicate@test.com", // Email tr�ng
+                Email = "duplicate@test.com", // Duplicate email
                 Password = "Test@456",
                 Role = "Instructor"
             };
@@ -88,7 +88,7 @@ namespace LMS.API.IntegrationTests.Controllers
         }
 
         /// <summary>
-        /// Test: Register v?i password y?u (kh�ng ?? y�u c?u) ph?i tr? v? 400
+        /// Test: Register with weak password (not meeting requirements) should return 400
         /// </summary>
         [Fact]
         public async Task Register_WithWeakPassword_ShouldReturn400()
@@ -98,7 +98,7 @@ namespace LMS.API.IntegrationTests.Controllers
             {
                 UserName = "testuser",
                 Email = "test@weak.com",
-                Password = "123", // Password qu� ng?n, kh�ng c� ch? hoa, ch? th??ng
+                Password = "123", // Password too short and does not meet complexity rules
                 Role = "Student"
             };
 
@@ -110,7 +110,7 @@ namespace LMS.API.IntegrationTests.Controllers
         }
 
         /// <summary>
-        /// Test: Register v?i role kh�ng h?p l? ph?i tr? v? 400
+        /// Test: Register with invalid role should return 400
         /// </summary>
         [Fact]
         public async Task Register_WithInvalidRole_ShouldReturn400()
@@ -121,7 +121,7 @@ namespace LMS.API.IntegrationTests.Controllers
                 UserName = "testuser",
                 Email = "test@role.com",
                 Password = "Test@123",
-                Role = "InvalidRole" // Role kh�ng t?n t?i
+                Role = "InvalidRole" // Role does not exist
             };
 
             // Act
@@ -132,12 +132,12 @@ namespace LMS.API.IntegrationTests.Controllers
         }
 
         /// <summary>
-        /// Test: Register v?i missing fields ph?i tr? v? 400
+        /// Test: Register with missing fields should return 400
         /// </summary>
         [Fact]
         public async Task Register_WithMissingFields_ShouldReturn400()
         {
-            // Arrange - Email r?ng
+            // Arrange - Empty email
             var request = new RegisterRequest
             {
                 UserName = "testuser",
@@ -158,12 +158,12 @@ namespace LMS.API.IntegrationTests.Controllers
         #region Login Tests
 
         /// <summary>
-        /// Test: Login v?i credentials ?�ng ph?i tr? v? 200 OK v� token
+        /// Test: Login with valid credentials should return 200 OK and token
         /// </summary>
         [Fact]
         public async Task Login_WithValidCredentials_ShouldReturn200WithToken()
         {
-            // Arrange - Register user tr??c
+            // Arrange - Register user first
             var registerRequest = new RegisterRequest
             {
                 UserName = "loginuser",
@@ -174,7 +174,7 @@ namespace LMS.API.IntegrationTests.Controllers
 
             await _client.PostAsJsonAsync("/api/auth/register", registerRequest);
 
-            // Login v?i credentials v?a register
+            // Login with the credentials from registration
             var loginRequest = new LoginRequest
             {
                 Email = "login@test.com",
@@ -194,7 +194,7 @@ namespace LMS.API.IntegrationTests.Controllers
         }
 
         /// <summary>
-        /// Test: Login v?i email kh�ng t?n t?i ph?i tr? v? 401 Unauthorized
+        /// Test: Login with non-existent email should return 401 Unauthorized
         /// </summary>
         [Fact]
         public async Task Login_WithNonExistentEmail_ShouldReturn401()
@@ -214,12 +214,12 @@ namespace LMS.API.IntegrationTests.Controllers
         }
 
         /// <summary>
-        /// Test: Login v?i password sai ph?i tr? v? 401 Unauthorized
+        /// Test: Login with wrong password should return 401 Unauthorized
         /// </summary>
         [Fact]
         public async Task Login_WithWrongPassword_ShouldReturn401()
         {
-            // Arrange - Register user tr??c
+            // Arrange - Register user first
             var registerRequest = new RegisterRequest
             {
                 UserName = "wrongpwduser",
@@ -230,11 +230,11 @@ namespace LMS.API.IntegrationTests.Controllers
 
             await _client.PostAsJsonAsync("/api/auth/register", registerRequest);
 
-            // Login v?i password sai
+            // Login with wrong password
             var loginRequest = new LoginRequest
             {
                 Email = "wrongpwd@test.com",
-                Password = "Wrong@123" // Password sai
+                Password = "Wrong@123" // Wrong password
             };
 
             // Act
@@ -245,7 +245,7 @@ namespace LMS.API.IntegrationTests.Controllers
         }
 
         /// <summary>
-        /// Test: Login v?i missing fields ph?i tr? v? 400
+        /// Test: Login with missing fields should return 400
         /// </summary>
         [Fact]
         public async Task Login_WithMissingFields_ShouldReturn400()
@@ -269,7 +269,7 @@ namespace LMS.API.IntegrationTests.Controllers
         #region JWT Token Tests
 
         /// <summary>
-        /// Test: JWT token nh?n ???c ph?i c� th? s? d?ng ?? authenticate
+        /// Test: Received JWT token should be usable for authentication
         /// </summary>
         [Fact]
         public async Task Register_TokenShouldBeValidForAuthentication()
@@ -286,13 +286,13 @@ namespace LMS.API.IntegrationTests.Controllers
             var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerRequest);
             var authResult = await registerResponse.Content.ReadFromJsonAsync<AuthResponse>();
 
-            // Act - S? d?ng token ?? call protected endpoint
+            // Act - Use token to call protected endpoint
             _client.DefaultRequestHeaders.Authorization = 
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authResult!.Token);
 
             var protectedResponse = await _client.GetAsync("/api/my-enrollments");
 
-            // Assert - Ph?i kh�ng b? 401 Unauthorized
+            // Assert - Should not return 401 Unauthorized
             protectedResponse.StatusCode.Should().NotBe(HttpStatusCode.Unauthorized);
         }
 

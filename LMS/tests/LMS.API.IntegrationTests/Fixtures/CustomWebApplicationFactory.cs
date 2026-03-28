@@ -30,7 +30,7 @@ namespace LMS.API.IntegrationTests.Fixtures
                 // Build service provider
                 var serviceProvider = services.BuildServiceProvider();
 
-                // Create scope v� seed database
+                // Create scope and seed database
                 using var scope = serviceProvider.CreateScope();
                 var scopedServices = scope.ServiceProvider;
                 var db = scopedServices.GetRequiredService<AppDbContext>();
@@ -38,13 +38,13 @@ namespace LMS.API.IntegrationTests.Fixtures
                 // Ensure database is created
                 db.Database.EnsureCreated();
 
-                // Seed test data n?u c?n
+                // Seed test data if needed
                 SeedTestData(db);
             });
         }
 
         /// <summary>
-        /// Seed initial test data v�o database
+        /// Seed initial test data into the database
         /// </summary>
         private void SeedTestData(AppDbContext context)
         {
@@ -52,8 +52,8 @@ namespace LMS.API.IntegrationTests.Fixtures
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            // C� th? th�m test data ? ?�y n?u c?n
-            // V� d?: T?o 1 admin user, 1 instructor, 1 student
+            // Additional test seed data can be added here if needed
+            // Example: Create 1 admin user, 1 instructor, and 1 student
         }
     }
 }

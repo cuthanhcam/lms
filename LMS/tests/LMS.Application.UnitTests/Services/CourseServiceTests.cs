@@ -29,7 +29,7 @@ namespace LMS.Application.UnitTests.Services
         #region CreateAsync Tests
 
         /// <summary>
-        /// Test: T?o course v?i th�ng tin h?p l? ph?i th�nh c�ng
+        /// Test: Create course with valid data should succeed
         /// </summary>
         [Fact]
         public async Task CreateAsync_WithValidRequest_ShouldReturnCourseDto()
@@ -69,14 +69,14 @@ namespace LMS.Application.UnitTests.Services
             result.Description.Should().Be(request.Description);
             result.Price.Should().Be(request.Price);
             result.CreatedBy.Should().Be(userId);
-            result.IsPublished.Should().BeFalse(); // Default ph?i l� false
+            result.IsPublished.Should().BeFalse(); // Default should be false
 
             _mockUnitOfWork.Verify(x => x.Courses.AddAsync(It.IsAny<Course>()), Times.Once);
             _mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
 
         /// <summary>
-        /// Test: T?o course v?i price �m ph?i throw BadRequestException
+        /// Test: Create course with negative price should throw BadRequestException
         /// </summary>
         [Fact]
         public async Task CreateAsync_WithNegativePrice_ShouldThrowBadRequestException()
@@ -87,7 +87,7 @@ namespace LMS.Application.UnitTests.Services
             {
                 Title = "New Course",
                 Description = "Test Description",
-                Price = -10m // Price �m
+                Price = -10m // Negative price
             };
 
             // Act & Assert
@@ -102,7 +102,7 @@ namespace LMS.Application.UnitTests.Services
         #region UpdateAsync Tests
 
         /// <summary>
-        /// Test: Instructor update course c?a m�nh ph?i th�nh c�ng
+        /// Test: Instructor updating own course should succeed
         /// </summary>
         [Fact]
         public async Task UpdateAsync_OwnerUpdateOwnCourse_ShouldSucceed()
@@ -145,7 +145,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Instructor update course c?a ng??i kh�c ph?i throw ForbiddenException
+        /// Test: Instructor updating another user's course should throw ForbiddenException
         /// </summary>
         [Fact]
         public async Task UpdateAsync_InstructorUpdateOtherCourse_ShouldThrowForbiddenException()
@@ -164,7 +164,7 @@ namespace LMS.Application.UnitTests.Services
 
             var existingCourse = new CourseBuilder()
                 .WithId(courseId)
-                .WithCreatedBy(otherId) // Course c?a ng??i kh�c
+                .WithCreatedBy(otherId) // Course owned by another user
                 .Build();
 
             _mockUnitOfWork.Setup(x => x.Courses.GetByIdWithDetailsAsync(courseId))
@@ -178,7 +178,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Admin c� th? update b?t k? course n�o
+        /// Test: Admin can update any course
         /// </summary>
         [Fact]
         public async Task UpdateAsync_AdminUpdateAnyCourse_ShouldSucceed()
@@ -197,7 +197,7 @@ namespace LMS.Application.UnitTests.Services
 
             var existingCourse = new CourseBuilder()
                 .WithId(courseId)
-                .WithCreatedBy(courseOwnerId) // Course c?a ng??i kh�c
+                .WithCreatedBy(courseOwnerId) // Course owned by another user
                 .WithCreatedByUser(new UserBuilder().WithId(courseOwnerId).Build())
                 .Build();
 
@@ -229,21 +229,21 @@ namespace LMS.Application.UnitTests.Services
                 Title = "Course",
                 Description = "Description",
                 Price = 99.99m,
-                IsPublished = true // C? g?ng publish
+                IsPublished = true // Attempt to publish
             };
 
             var existingCourse = new CourseBuilder()
                 .WithId(courseId)
                 .WithCreatedBy(userId)
                 .WithCreatedByUser(new UserBuilder().WithId(userId).Build())
-                // Kh�ng c� lessons
+                // No lessons
                 .Build();
 
             _mockUnitOfWork.Setup(x => x.Courses.GetByIdWithDetailsAsync(courseId))
                 .ReturnsAsync(existingCourse);
 
             _mockUnitOfWork.Setup(x => x.Courses.CanPublishAsync(courseId))
-                .ReturnsAsync(false); // Kh�ng th? publish
+                .ReturnsAsync(false); // Cannot publish
 
             // Act & Assert
             await Assert.ThrowsAsync<BadRequestException>(
@@ -251,7 +251,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Update course kh�ng t?n t?i ph?i throw NotFoundException
+        /// Test: Update non-existent course should throw NotFoundException
         /// </summary>
         [Fact]
         public async Task UpdateAsync_NonExistentCourse_ShouldThrowNotFoundException()
@@ -279,7 +279,7 @@ namespace LMS.Application.UnitTests.Services
         #region DeleteAsync Tests
 
         /// <summary>
-        /// Test: Admin x�a course ph?i th�nh c�ng (soft delete)
+        /// Test: Admin deleting course should succeed (soft delete)
         /// </summary>
         [Fact]
         public async Task DeleteAsync_AdminDeleteCourse_ShouldSucceed()
@@ -305,7 +305,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Non-admin kh�ng th? x�a course
+        /// Test: Non-admin cannot delete course
         /// </summary>
         [Fact]
         public async Task DeleteAsync_NonAdminDeleteCourse_ShouldThrowForbiddenException()
@@ -325,7 +325,7 @@ namespace LMS.Application.UnitTests.Services
         #region GetByIdAsync Tests
 
         /// <summary>
-        /// Test: Get course by ID th�nh c�ng
+        /// Test: Get course by ID should succeed
         /// </summary>
         [Fact]
         public async Task GetByIdAsync_ExistingCourse_ShouldReturnCourseDto()
@@ -351,7 +351,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Get course kh�ng t?n t?i ph?i throw NotFoundException
+        /// Test: Get non-existent course should throw NotFoundException
         /// </summary>
         [Fact]
         public async Task GetByIdAsync_NonExistentCourse_ShouldThrowNotFoundException()
