@@ -43,7 +43,7 @@ public class UserTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Username*required*");
+            .WithMessage("*Username*empty*");
     }
 
     [Theory]
@@ -57,7 +57,7 @@ public class UserTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Email*required*");
+            .WithMessage("*Email*empty*");
     }
 
     [Theory]
@@ -71,7 +71,7 @@ public class UserTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Password*required*");
+            .WithMessage("*PasswordHash*empty*");
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class UserTests
         var newEmail = "new@test.com";
 
         // Act
-        user.UpdateInfo(newFullName, newEmail);
+        user.UpdateInfo(newEmail, newFullName);
 
         // Assert
         user.FullName.Should().Be(newFullName);

@@ -74,6 +74,8 @@ public class CourseServiceTests
             new Course("Course 1", "Desc 1", 100m, instructorId),
             new Course("Course 2", "Desc 2", 200m, instructorId)
         };
+        courses[0].AddLesson(new Lesson("Lesson 1", "Content 1", null, 1, 30, courses[0].Id));
+        courses[1].AddLesson(new Lesson("Lesson 2", "Content 2", null, 1, 30, courses[1].Id));
         courses[0].Publish();
         courses[1].Publish();
 

@@ -63,6 +63,9 @@ namespace SimpleLMS.Application.Services
                 if (!course.IsPublished)
                     return Result<EnrollmentDto>.Failure("Course is not published");
 
+                if (await _unitOfWork.Enrollments.UserAlreadyEnrolledAsync(userId, dto.CourseId))
+                    return Result<EnrollmentDto>.Failure("User is already enrolled in this course");
+
                 var enrollment = new Enrollment(userId, dto.CourseId);
 
                 await _unitOfWork.Enrollments.AddAsync(enrollment);
@@ -97,12 +100,6 @@ namespace SimpleLMS.Application.Services
                     return Result.Failure("Progress percentage must be between 0 and 100");
 
                 enrollment.UpdateProgress(dto.ProgressPercentage);
-
-                // Auto-complete if progress is 100%
-                if (dto.ProgressPercentage >= 100)
-                {
-                    enrollment.Complete();
-                }
 
                 await _unitOfWork.Enrollments.UpdateAsync(enrollment);
                 await _unitOfWork.SaveChangesAsync();

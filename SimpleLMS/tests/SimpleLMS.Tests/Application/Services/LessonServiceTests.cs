@@ -169,7 +169,7 @@ public class LessonServiceTests
             DurationMinutes = 45
         };
 
-        _unitOfWorkMock.Setup(u => u.Lessons.GetLessonWithCourseAsync(lessonId))
+        _unitOfWorkMock.Setup(u => u.Lessons.GetByIdAsync(lessonId))
             .ReturnsAsync(lesson);
         _unitOfWorkMock.Setup(u => u.Courses.GetByIdAsync(courseId))
             .ReturnsAsync(course);

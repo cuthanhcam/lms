@@ -41,7 +41,7 @@ public class CourseTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Title*required*");
+            .WithMessage("*Title*empty*");
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class CourseTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*InstructorId*required*");
+            .WithMessage("*InstructorId*empty*");
     }
 
     [Fact]
@@ -90,6 +90,7 @@ public class CourseTests
     {
         // Arrange
         var course = new Course("Title", "Description", 100m, Guid.NewGuid());
+        course.AddLesson(new Lesson("Lesson 1", "Content", null, 1, 30, course.Id));
 
         // Act
         course.Publish();
@@ -104,6 +105,7 @@ public class CourseTests
     {
         // Arrange
         var course = new Course("Title", "Description", 100m, Guid.NewGuid());
+        course.AddLesson(new Lesson("Lesson 1", "Content", null, 1, 30, course.Id));
         course.Publish();
 
         // Act
@@ -119,6 +121,7 @@ public class CourseTests
     {
         // Arrange
         var course = new Course("Title", "Description", 100m, Guid.NewGuid());
+        course.AddLesson(new Lesson("Lesson 1", "Content", null, 1, 30, course.Id));
         course.Publish();
 
         // Act
@@ -162,6 +165,7 @@ public class CourseTests
     {
         // Arrange
         var course = new Course("Title", "Description", 100m, Guid.NewGuid());
+        course.AddLesson(new Lesson("Lesson 1", "Content", null, 1, 30, course.Id));
         course.Publish();
 
         // Act
