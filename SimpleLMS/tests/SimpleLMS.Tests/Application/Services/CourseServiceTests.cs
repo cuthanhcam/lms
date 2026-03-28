@@ -1,4 +1,3 @@
-using AutoMapper;
 using SimpleLMS.Application.Common;
 using SimpleLMS.Application.DTOs.Courses;
 using SimpleLMS.Application.Interfaces.Repositories;
@@ -14,14 +13,12 @@ namespace SimpleLMS.Tests.Application.Services;
 public class CourseServiceTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-    private readonly Mock<IMapper> _mapperMock;
     private readonly CourseService _courseService;
 
     public CourseServiceTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _mapperMock = new Mock<IMapper>();
-        _courseService = new CourseService(_unitOfWorkMock.Object, _mapperMock.Object);
+        _courseService = new CourseService(_unitOfWorkMock.Object);
     }
 
     [Fact]
@@ -31,12 +28,8 @@ public class CourseServiceTests
         var courseId = Guid.NewGuid();
         var instructorId = Guid.NewGuid();
         var course = new Course("Test Course", "Description", 100m, instructorId);
-        var courseDto = new CourseDto { Id = courseId, Title = "Test Course" };
-
         _unitOfWorkMock.Setup(u => u.Courses.GetByIdAsync(courseId))
             .ReturnsAsync(course);
-        _mapperMock.Setup(m => m.Map<CourseDto>(course))
-            .Returns(courseDto);
 
         // Act
         var result = await _courseService.GetByIdAsync(courseId);
@@ -44,7 +37,7 @@ public class CourseServiceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().NotBeNull();
-        result.Data!.Id.Should().Be(courseId);
+        result.Data!.Id.Should().Be(course.Id);
         result.Data.Title.Should().Be("Test Course");
     }
 
@@ -79,16 +72,8 @@ public class CourseServiceTests
         courses[0].Publish();
         courses[1].Publish();
 
-        var courseDtos = new List<CourseDto>
-        {
-            new CourseDto { Id = Guid.NewGuid(), Title = "Course 1", IsPublished = true },
-            new CourseDto { Id = Guid.NewGuid(), Title = "Course 2", IsPublished = true }
-        };
-
         _unitOfWorkMock.Setup(u => u.Courses.GetPublishedCoursesAsync())
             .ReturnsAsync(courses);
-        _mapperMock.Setup(m => m.Map<IEnumerable<CourseDto>>(courses))
-            .Returns(courseDtos);
 
         // Act
         var result = await _courseService.GetPublishedCoursesAsync();
@@ -118,8 +103,6 @@ public class CourseServiceTests
             .ReturnsAsync((Course c) => c);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(1);
-        _mapperMock.Setup(m => m.Map<CourseDto>(It.IsAny<Course>()))
-            .Returns(new CourseDto { Title = createDto.Title });
 
         // Act
         var result = await _courseService.CreateAsync(instructorId, createDto);
@@ -173,8 +156,6 @@ public class CourseServiceTests
             .ReturnsAsync(course);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(1);
-        _mapperMock.Setup(m => m.Map<CourseDto>(It.IsAny<Course>()))
-            .Returns(new CourseDto { Title = updateDto.Title });
 
         // Act
         var result = await _courseService.UpdateAsync(courseId, instructorId, updateDto);

@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using SimpleLMS.Application.Common;
+﻿using SimpleLMS.Application.Common;
 using SimpleLMS.Application.DTOs.Courses;
+using SimpleLMS.Application.DTOs.Lessons;
 using SimpleLMS.Application.Interfaces.Repositories;
 using SimpleLMS.Application.Interfaces.Services;
 using SimpleLMS.Domain.Entities;
@@ -17,12 +17,10 @@ namespace SimpleLMS.Application.Services
     public class CourseService : ICourseService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public CourseService(IUnitOfWork unitOfWork, IMapper mapper)
+        public CourseService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<CourseDto>> GetByIdAsync(Guid id)
@@ -31,7 +29,7 @@ namespace SimpleLMS.Application.Services
             if (course == null)
                 return Result<CourseDto>.Failure("Course not found");
 
-            var courseDto = _mapper.Map<CourseDto>(course);
+            var courseDto = MapToCourseDto(course);
             return Result<CourseDto>.Success(courseDto);
         }
 
@@ -41,28 +39,28 @@ namespace SimpleLMS.Application.Services
             if (course == null)
                 return Result<CourseDetailDto>.Failure("Course not found");
 
-            var courseDto = _mapper.Map<CourseDetailDto>(course);
+            var courseDto = MapToCourseDetailDto(course);
             return Result<CourseDetailDto>.Success(courseDto);
         }
 
         public async Task<Result<IEnumerable<CourseDto>>> GetAllAsync()
         {
             var courses = await _unitOfWork.Courses.GetAllAsync();
-            var courseDtos = _mapper.Map<IEnumerable<CourseDto>>(courses);
+            var courseDtos = courses.Select(MapToCourseDto).ToList();
             return Result<IEnumerable<CourseDto>>.Success(courseDtos);
         }
 
         public async Task<Result<IEnumerable<CourseDto>>> GetPublishedCoursesAsync()
         {
             var courses = await _unitOfWork.Courses.GetPublishedCoursesAsync();
-            var courseDtos = _mapper.Map<IEnumerable<CourseDto>>(courses);
+            var courseDtos = courses.Select(MapToCourseDto).ToList();
             return Result<IEnumerable<CourseDto>>.Success(courseDtos);
         }
 
         public async Task<Result<IEnumerable<CourseDto>>> GetCoursesByInstructorAsync(Guid instructorId)
         {
             var courses = await _unitOfWork.Courses.GetCoursesByInstructorAsync(instructorId);
-            var courseDtos = _mapper.Map<IEnumerable<CourseDto>>(courses);
+            var courseDtos = courses.Select(MapToCourseDto).ToList();
             return Result<IEnumerable<CourseDto>>.Success(courseDtos);
         }
 
@@ -85,7 +83,7 @@ namespace SimpleLMS.Application.Services
                 await _unitOfWork.Courses.AddAsync(course);
                 await _unitOfWork.SaveChangesAsync();
 
-                var courseDto = _mapper.Map<CourseDto>(course);
+                var courseDto = MapToCourseDto(course);
                 return Result<CourseDto>.Success(courseDto);
             }
             catch (BusinessRuleViolationException ex)
@@ -115,7 +113,7 @@ namespace SimpleLMS.Application.Services
                 await _unitOfWork.Courses.UpdateAsync(course);
                 await _unitOfWork.SaveChangesAsync();
 
-                var courseDto = _mapper.Map<CourseDto>(course);
+                var courseDto = MapToCourseDto(course);
                 return Result<CourseDto>.Success(courseDto);
             }
             catch (BusinessRuleViolationException ex)
@@ -209,6 +207,56 @@ namespace SimpleLMS.Application.Services
             {
                 return Result.Failure($"Failed to unpublish course: {ex.Message}");
             }
+        }
+
+        private static CourseDto MapToCourseDto(Course course)
+        {
+            return new CourseDto
+            {
+                Id = course.Id,
+                Title = course.Title,
+                Description = course.Description,
+                Price = course.Price,
+                InstructorId = course.InstructorId,
+                InstructorName = course.Instructor?.FullName ?? string.Empty,
+                IsPublished = course.IsPublished,
+                TotalLessons = course.Lessons.Count,
+                TotalDurationMinutes = course.Lessons.Sum(l => l.DurationMinutes),
+                CreatedAt = course.CreatedAt
+            };
+        }
+
+        private static CourseDetailDto MapToCourseDetailDto(Course course)
+        {
+            return new CourseDetailDto
+            {
+                Id = course.Id,
+                Title = course.Title,
+                Description = course.Description,
+                Price = course.Price,
+                InstructorId = course.InstructorId,
+                InstructorName = course.Instructor?.FullName ?? string.Empty,
+                IsPublished = course.IsPublished,
+                TotalLessons = course.Lessons.Count,
+                TotalDurationMinutes = course.Lessons.Sum(l => l.DurationMinutes),
+                CreatedAt = course.CreatedAt,
+                Lessons = course.Lessons.Select(MapToLessonDto).ToList()
+            };
+        }
+
+        private static LessonDto MapToLessonDto(Lesson lesson)
+        {
+            return new LessonDto
+            {
+                Id = lesson.Id,
+                Title = lesson.Title,
+                Content = lesson.Content,
+                VideoUrl = lesson.VideoUrl,
+                Order = lesson.Order,
+                DurationMinutes = lesson.DurationMinutes,
+                CourseId = lesson.CourseId,
+                CreatedAt = lesson.CreatedAt
+            };
         }
     }
 }

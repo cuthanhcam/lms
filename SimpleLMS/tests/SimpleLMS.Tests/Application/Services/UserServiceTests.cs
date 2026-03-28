@@ -1,4 +1,3 @@
-using AutoMapper;
 using SimpleLMS.Application.DTOs.Users;
 using SimpleLMS.Application.Interfaces.Repositories;
 using SimpleLMS.Application.Services;
@@ -13,14 +12,12 @@ namespace SimpleLMS.Tests.Application.Services;
 public class UserServiceTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-    private readonly Mock<IMapper> _mapperMock;
     private readonly UserService _userService;
 
     public UserServiceTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _mapperMock = new Mock<IMapper>();
-        _userService = new UserService(_unitOfWorkMock.Object, _mapperMock.Object);
+        _userService = new UserService(_unitOfWorkMock.Object);
     }
 
     [Fact]
@@ -29,12 +26,8 @@ public class UserServiceTests
         // Arrange
         var userId = Guid.NewGuid();
         var user = new User("testuser", "test@test.com", "hash", "Test User", UserRole.Student);
-        var userDto = new UserDto { Id = userId, UserName = "testuser" };
-
         _unitOfWorkMock.Setup(u => u.Users.GetByIdAsync(userId))
             .ReturnsAsync(user);
-        _mapperMock.Setup(m => m.Map<UserDto>(user))
-            .Returns(userDto);
 
         // Act
         var result = await _userService.GetByIdAsync(userId);
@@ -82,8 +75,6 @@ public class UserServiceTests
             .ReturnsAsync((User user) => user);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(1);
-        _mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>()))
-            .Returns(new UserDto { UserName = createDto.Username });
 
         // Act
         var result = await _userService.CreateAsync(createDto);
@@ -158,12 +149,8 @@ public class UserServiceTests
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(loginDto.Password);
         var user = new User(loginDto.Username, "test@test.com", passwordHash, "Test User", UserRole.Student);
-        var userDto = new UserDto { UserName = loginDto.Username };
-
         _unitOfWorkMock.Setup(u => u.Users.GetByUsernameAsync(loginDto.Username))
             .ReturnsAsync(user);
-        _mapperMock.Setup(m => m.Map<UserDto>(user))
-            .Returns(userDto);
 
         // Act
         var result = await _userService.LoginAsync(loginDto);
@@ -234,8 +221,6 @@ public class UserServiceTests
             .ReturnsAsync(user);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(1);
-        _mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>()))
-            .Returns(new UserDto { FullName = updateDto.FullName });
 
         // Act
         var result = await _userService.UpdateAsync(userId, updateDto);

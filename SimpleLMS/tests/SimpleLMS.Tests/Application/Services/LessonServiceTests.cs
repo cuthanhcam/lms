@@ -1,4 +1,3 @@
-using AutoMapper;
 using SimpleLMS.Application.DTOs.Lessons;
 using SimpleLMS.Application.Interfaces.Repositories;
 using SimpleLMS.Application.Services;
@@ -13,14 +12,12 @@ namespace SimpleLMS.Tests.Application.Services;
 public class LessonServiceTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-    private readonly Mock<IMapper> _mapperMock;
     private readonly LessonService _lessonService;
 
     public LessonServiceTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _mapperMock = new Mock<IMapper>();
-        _lessonService = new LessonService(_unitOfWorkMock.Object, _mapperMock.Object);
+        _lessonService = new LessonService(_unitOfWorkMock.Object);
     }
 
     [Fact]
@@ -30,12 +27,8 @@ public class LessonServiceTests
         var lessonId = Guid.NewGuid();
         var courseId = Guid.NewGuid();
         var lesson = new Lesson("Test Lesson", "Content", null, 1, 30, courseId);
-        var lessonDto = new LessonDto { Id = lessonId, Title = "Test Lesson" };
-
         _unitOfWorkMock.Setup(u => u.Lessons.GetByIdAsync(lessonId))
             .ReturnsAsync(lesson);
-        _mapperMock.Setup(m => m.Map<LessonDto>(lesson))
-            .Returns(lessonDto);
 
         // Act
         var result = await _lessonService.GetByIdAsync(lessonId);
@@ -73,16 +66,8 @@ public class LessonServiceTests
             new Lesson("Lesson 2", "Content 2", null, 2, 45, courseId)
         };
 
-        var lessonDtos = new List<LessonDto>
-        {
-            new LessonDto { Title = "Lesson 1", Order = 1 },
-            new LessonDto { Title = "Lesson 2", Order = 2 }
-        };
-
         _unitOfWorkMock.Setup(u => u.Lessons.GetLessonsByCourseAsync(courseId))
             .ReturnsAsync(lessons);
-        _mapperMock.Setup(m => m.Map<IEnumerable<LessonDto>>(lessons))
-            .Returns(lessonDtos);
 
         // Act
         var result = await _lessonService.GetLessonsByCourseAsync(courseId);
@@ -113,8 +98,6 @@ public class LessonServiceTests
             .ReturnsAsync((Lesson l) => l);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(1);
-        _mapperMock.Setup(m => m.Map<LessonDto>(It.IsAny<Lesson>()))
-            .Returns(new LessonDto { Title = createDto.Title });
 
         // Act
         var result = await _lessonService.CreateAsync(courseId, instructorId, createDto);
@@ -175,8 +158,6 @@ public class LessonServiceTests
             .ReturnsAsync(course);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(1);
-        _mapperMock.Setup(m => m.Map<LessonDto>(It.IsAny<Lesson>()))
-            .Returns(new LessonDto { Title = updateDto.Title });
 
         // Act
         var result = await _lessonService.UpdateAsync(lessonId, instructorId, updateDto);
