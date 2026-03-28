@@ -11,7 +11,7 @@ namespace SimpleLMS.Infrastructure.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
-        private IDbContextTransaction _transaction;
+        private IDbContextTransaction? _transaction;
 
         // Repositories
         private IUserRepository? _userRepository;

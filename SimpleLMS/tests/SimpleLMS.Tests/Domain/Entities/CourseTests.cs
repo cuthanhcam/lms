@@ -34,10 +34,10 @@ public class CourseTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Constructor_WithInvalidTitle_ShouldThrowException(string invalidTitle)
+    public void Constructor_WithInvalidTitle_ShouldThrowException(string? invalidTitle)
     {
         // Arrange & Act
-        Action act = () => new Course(invalidTitle, "Description", 100m, Guid.NewGuid());
+        Action act = () => new Course(invalidTitle!, "Description", 100m, Guid.NewGuid());
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()

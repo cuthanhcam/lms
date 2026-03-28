@@ -9,10 +9,10 @@ namespace SimpleLMS.Domain.Entities
 {
     public class User : BaseEntity
     {
-        public string Username { get; private set; }
-        public string Email { get; private set; }
-        public string PasswordHash { get; private set; }
-        public string FullName { get; private set; }
+        public string Username { get; private set; } = string.Empty;
+        public string Email { get; private set; } = string.Empty;
+        public string PasswordHash { get; private set; } = string.Empty;
+        public string FullName { get; private set; } = string.Empty;
         public UserRole Role { get; private set; }
         public bool IsActive { get; private set; }
 

@@ -36,10 +36,10 @@ public class UserTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Constructor_WithInvalidUsername_ShouldThrowException(string invalidUsername)
+    public void Constructor_WithInvalidUsername_ShouldThrowException(string? invalidUsername)
     {
         // Arrange & Act
-        Action act = () => new User(invalidUsername, "email@test.com", "hash", "Name", UserRole.Student);
+        Action act = () => new User(invalidUsername!, "email@test.com", "hash", "Name", UserRole.Student);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
@@ -50,10 +50,10 @@ public class UserTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Constructor_WithInvalidEmail_ShouldThrowException(string invalidEmail)
+    public void Constructor_WithInvalidEmail_ShouldThrowException(string? invalidEmail)
     {
         // Arrange & Act
-        Action act = () => new User("username", invalidEmail, "hash", "Name", UserRole.Student);
+        Action act = () => new User("username", invalidEmail!, "hash", "Name", UserRole.Student);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
@@ -64,10 +64,10 @@ public class UserTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Constructor_WithInvalidPasswordHash_ShouldThrowException(string invalidHash)
+    public void Constructor_WithInvalidPasswordHash_ShouldThrowException(string? invalidHash)
     {
         // Arrange & Act
-        Action act = () => new User("username", "email@test.com", invalidHash, "Name", UserRole.Student);
+        Action act = () => new User("username", "email@test.com", invalidHash!, "Name", UserRole.Student);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
