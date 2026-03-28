@@ -35,7 +35,7 @@ public class EnrollmentTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*UserId*required*");
+            .WithMessage("*UserId*empty*");
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class EnrollmentTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*CourseId*required*");
+            .WithMessage("*CourseId*empty*");
     }
 
     [Theory]
@@ -93,7 +93,7 @@ public class EnrollmentTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Cannot update*completed*");
+            .WithMessage("*Cannot update progress for a non-active enrollment*");
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class EnrollmentTests
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Cannot update*cancelled*");
+            .WithMessage("*Cannot update progress for a non-active enrollment*");
     }
 
     [Fact]

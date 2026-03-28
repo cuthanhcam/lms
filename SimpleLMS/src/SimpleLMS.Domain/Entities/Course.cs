@@ -9,7 +9,7 @@ namespace SimpleLMS.Domain.Entities
 {
     public class Course : BaseEntity
     {
-        public string Title { get; private set; }
+        public string Title { get; private set; } = string.Empty;
         public string? Description { get; private set; }
         public decimal Price { get; private set; }
         public Guid InstructorId { get; private set; }

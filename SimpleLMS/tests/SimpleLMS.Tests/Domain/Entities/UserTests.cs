@@ -36,42 +36,42 @@ public class UserTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Constructor_WithInvalidUsername_ShouldThrowException(string invalidUsername)
+    public void Constructor_WithInvalidUsername_ShouldThrowException(string? invalidUsername)
     {
         // Arrange & Act
-        Action act = () => new User(invalidUsername, "email@test.com", "hash", "Name", UserRole.Student);
+        Action act = () => new User(invalidUsername!, "email@test.com", "hash", "Name", UserRole.Student);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Username*required*");
+            .WithMessage("*Username*empty*");
     }
 
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Constructor_WithInvalidEmail_ShouldThrowException(string invalidEmail)
+    public void Constructor_WithInvalidEmail_ShouldThrowException(string? invalidEmail)
     {
         // Arrange & Act
-        Action act = () => new User("username", invalidEmail, "hash", "Name", UserRole.Student);
+        Action act = () => new User("username", invalidEmail!, "hash", "Name", UserRole.Student);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Email*required*");
+            .WithMessage("*Email*empty*");
     }
 
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public void Constructor_WithInvalidPasswordHash_ShouldThrowException(string invalidHash)
+    public void Constructor_WithInvalidPasswordHash_ShouldThrowException(string? invalidHash)
     {
         // Arrange & Act
-        Action act = () => new User("username", "email@test.com", invalidHash, "Name", UserRole.Student);
+        Action act = () => new User("username", "email@test.com", invalidHash!, "Name", UserRole.Student);
 
         // Assert
         act.Should().Throw<BusinessRuleViolationException>()
-            .WithMessage("*Password*required*");
+            .WithMessage("*PasswordHash*empty*");
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class UserTests
         var newEmail = "new@test.com";
 
         // Act
-        user.UpdateInfo(newFullName, newEmail);
+        user.UpdateInfo(newEmail, newFullName);
 
         // Assert
         user.FullName.Should().Be(newFullName);

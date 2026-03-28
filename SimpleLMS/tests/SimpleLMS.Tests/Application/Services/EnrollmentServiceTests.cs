@@ -1,4 +1,3 @@
-using AutoMapper;
 using SimpleLMS.Application.DTOs.Enrollments;
 using SimpleLMS.Application.Interfaces.Repositories;
 using SimpleLMS.Application.Services;
@@ -13,14 +12,12 @@ namespace SimpleLMS.Tests.Application.Services;
 public class EnrollmentServiceTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-    private readonly Mock<IMapper> _mapperMock;
     private readonly EnrollmentService _enrollmentService;
 
     public EnrollmentServiceTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _mapperMock = new Mock<IMapper>();
-        _enrollmentService = new EnrollmentService(_unitOfWorkMock.Object, _mapperMock.Object);
+        _enrollmentService = new EnrollmentService(_unitOfWorkMock.Object);
     }
 
     [Fact]
@@ -31,12 +28,8 @@ public class EnrollmentServiceTests
         var userId = Guid.NewGuid();
         var courseId = Guid.NewGuid();
         var enrollment = new Enrollment(userId, courseId);
-        var enrollmentDto = new EnrollmentDto { Id = enrollmentId };
-
         _unitOfWorkMock.Setup(u => u.Enrollments.GetByIdAsync(enrollmentId))
             .ReturnsAsync(enrollment);
-        _mapperMock.Setup(m => m.Map<EnrollmentDto>(enrollment))
-            .Returns(enrollmentDto);
 
         // Act
         var result = await _enrollmentService.GetByIdAsync(enrollmentId);
@@ -59,16 +52,8 @@ public class EnrollmentServiceTests
             new Enrollment(userId, courseId2)
         };
 
-        var enrollmentDtos = new List<EnrollmentDto>
-        {
-            new EnrollmentDto { UserId = userId },
-            new EnrollmentDto { UserId = userId }
-        };
-
         _unitOfWorkMock.Setup(u => u.Enrollments.GetEnrollmentsByUserAsync(userId))
             .ReturnsAsync(enrollments);
-        _mapperMock.Setup(m => m.Map<IEnumerable<EnrollmentDto>>(enrollments))
-            .Returns(enrollmentDtos);
 
         // Act
         var result = await _enrollmentService.GetEnrollmentsByUserAsync(userId);
@@ -108,8 +93,6 @@ public class EnrollmentServiceTests
             .ReturnsAsync((Enrollment e) => e);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ReturnsAsync(1);
-        _mapperMock.Setup(m => m.Map<EnrollmentDto>(It.IsAny<Enrollment>()))
-            .Returns(new EnrollmentDto { UserId = userId, CourseId = courseId });
 
         // Act
         var result = await _enrollmentService.EnrollAsync(userId, createDto);

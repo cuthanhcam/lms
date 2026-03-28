@@ -21,7 +21,7 @@ namespace LMS.API.IntegrationTests.Helpers
         }
 
         /// <summary>
-        /// T?o HTTP client ?� authenticated v?i role Admin
+        /// Create an authenticated HTTP client with Admin role
         /// </summary>
         public async Task<HttpClient> CreateAdminClientAsync()
         {
@@ -29,7 +29,7 @@ namespace LMS.API.IntegrationTests.Helpers
         }
 
         /// <summary>
-        /// T?o HTTP client ?� authenticated v?i role Instructor
+        /// Create an authenticated HTTP client with Instructor role
         /// </summary>
         public async Task<HttpClient> CreateInstructorClientAsync()
         {
@@ -37,7 +37,7 @@ namespace LMS.API.IntegrationTests.Helpers
         }
 
         /// <summary>
-        /// T?o HTTP client ?� authenticated v?i role Student
+        /// Create an authenticated HTTP client with Student role
         /// </summary>
         public async Task<HttpClient> CreateStudentClientAsync()
         {
@@ -45,7 +45,7 @@ namespace LMS.API.IntegrationTests.Helpers
         }
 
         /// <summary>
-        /// T?o HTTP client ?� authenticated v?i custom role
+        /// Create an authenticated HTTP client with a custom role
         /// </summary>
         private async Task<HttpClient> CreateAuthenticatedClientAsync(string role, string email, string password)
         {
@@ -76,7 +76,7 @@ namespace LMS.API.IntegrationTests.Helpers
 
             if (!registerResponse.IsSuccessStatusCode)
             {
-                // N?u register fail, th? login
+                // If registration fails, try login
                 var loginRequest = new LoginRequest
                 {
                     Email = email,
@@ -99,7 +99,7 @@ namespace LMS.API.IntegrationTests.Helpers
         }
 
         /// <summary>
-        /// T?o HTTP client kh�ng authenticated (anonymous)
+        /// Create a non-authenticated (anonymous) HTTP client
         /// </summary>
         public HttpClient CreateAnonymousClient()
         {

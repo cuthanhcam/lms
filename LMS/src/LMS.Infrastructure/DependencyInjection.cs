@@ -22,9 +22,13 @@ namespace LMS.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
             // ==================== DATABASE ====================
-            
+
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection"),
+                    sqlOptions => sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null)));
 
             // ==================== REPOSITORIES ====================
             
@@ -45,6 +49,7 @@ namespace LMS.Infrastructure
 
             // Register domain event handlers
             services.AddScoped<IDomainEventHandler<CoursePublishedEvent>, CoursePublishedEventHandler>();
+            services.AddScoped<IDomainEventHandler<CourseUnpublishedEvent>, CourseUnpublishedEventHandler>();
             services.AddScoped<IDomainEventHandler<EnrollmentCreatedEvent>, EnrollmentCreatedEventHandler>();
 
             return services;

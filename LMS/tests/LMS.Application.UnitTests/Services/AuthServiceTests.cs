@@ -30,7 +30,7 @@ namespace LMS.Application.UnitTests.Services
             _mockPasswordHasher = new Mock<IPasswordHasher>();
             _mockTokenService = new Mock<ITokenService>();
 
-            // T?o instance c?a AuthService v?i mocked dependencies
+            // Create AuthService instance with mocked dependencies
             _authService = new AuthService(
                 _mockUnitOfWork.Object,
                 _mockPasswordHasher.Object,
@@ -40,7 +40,7 @@ namespace LMS.Application.UnitTests.Services
         #region Register Tests
 
         /// <summary>
-        /// Test: Register v?i th�ng tin h?p l? ph?i th�nh c�ng
+        /// Test: Register with valid information should succeed
         /// </summary>
         [Fact]
         public async Task RegisterAsync_WithValidRequest_ShouldReturnAuthResponse()
@@ -91,7 +91,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Register v?i email ?� t?n t?i ph?i throw BadRequestException
+        /// Test: Register with existing email should throw BadRequestException
         /// </summary>
         [Fact]
         public async Task RegisterAsync_WithDuplicateEmail_ShouldThrowBadRequestException()
@@ -117,7 +117,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Register v?i role kh�ng h?p l? ph?i throw BadRequestException
+        /// Test: Register with invalid role should throw BadRequestException
         /// </summary>
         [Fact]
         public async Task RegisterAsync_WithInvalidRole_ShouldThrowBadRequestException()
@@ -144,7 +144,7 @@ namespace LMS.Application.UnitTests.Services
         #region Login Tests
 
         /// <summary>
-        /// Test: Login v?i credentials ?�ng ph?i th�nh c�ng
+        /// Test: Login with valid credentials should succeed
         /// </summary>
         [Fact]
         public async Task LoginAsync_WithValidCredentials_ShouldReturnAuthResponse()
@@ -186,7 +186,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Login v?i email kh�ng t?n t?i ph?i throw UnauthorizedException
+        /// Test: Login with non-existent email should throw UnauthorizedException
         /// </summary>
         [Fact]
         public async Task LoginAsync_WithNonExistentEmail_ShouldThrowUnauthorizedException()
@@ -210,7 +210,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Login v?i password sai ph?i throw UnauthorizedException
+        /// Test: Login with wrong password should throw UnauthorizedException
         /// </summary>
         [Fact]
         public async Task LoginAsync_WithWrongPassword_ShouldThrowUnauthorizedException()
@@ -242,7 +242,7 @@ namespace LMS.Application.UnitTests.Services
         }
 
         /// <summary>
-        /// Test: Login v?i user kh�ng active ph?i throw UnauthorizedException
+        /// Test: Login with inactive user should throw UnauthorizedException
         /// </summary>
         [Fact]
         public async Task LoginAsync_WithInactiveUser_ShouldThrowUnauthorizedException()

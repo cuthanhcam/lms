@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using SimpleLMS.Application.Common;
+﻿using SimpleLMS.Application.Common;
 using SimpleLMS.Application.DTOs.Enrollments;
 using SimpleLMS.Application.Interfaces.Repositories;
 using SimpleLMS.Application.Interfaces.Services;
@@ -14,12 +13,10 @@ namespace SimpleLMS.Application.Services
     public class EnrollmentService : IEnrollmentService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public EnrollmentService(IUnitOfWork unitOfWork, IMapper mapper)
+        public EnrollmentService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<EnrollmentDto>> GetByIdAsync(Guid id)
@@ -28,21 +25,21 @@ namespace SimpleLMS.Application.Services
             if (enrollment == null)
                 return Result<EnrollmentDto>.Failure("Enrollment not found");
 
-            var enrollmentDto = _mapper.Map<EnrollmentDto>(enrollment);
+            var enrollmentDto = MapToEnrollmentDto(enrollment);
             return Result<EnrollmentDto>.Success(enrollmentDto);
         }
 
         public async Task<Result<IEnumerable<EnrollmentDto>>> GetEnrollmentsByUserAsync(Guid userId)
         {
             var enrollments = await _unitOfWork.Enrollments.GetEnrollmentsByUserAsync(userId);
-            var enrollmentDtos = _mapper.Map<IEnumerable<EnrollmentDto>>(enrollments);
+            var enrollmentDtos = enrollments.Select(MapToEnrollmentDto).ToList();
             return Result<IEnumerable<EnrollmentDto>>.Success(enrollmentDtos);
         }
 
         public async Task<Result<IEnumerable<EnrollmentDto>>> GetEnrollmentsByCourseAsync(Guid courseId)
         {
             var enrollments = await _unitOfWork.Enrollments.GetEnrollmentsByCourseAsync(courseId);
-            var enrollmentDtos = _mapper.Map<IEnumerable<EnrollmentDto>>(enrollments);
+            var enrollmentDtos = enrollments.Select(MapToEnrollmentDto).ToList();
             return Result<IEnumerable<EnrollmentDto>>.Success(enrollmentDtos);
         }
 
@@ -63,12 +60,15 @@ namespace SimpleLMS.Application.Services
                 if (!course.IsPublished)
                     return Result<EnrollmentDto>.Failure("Course is not published");
 
+                if (await _unitOfWork.Enrollments.UserAlreadyEnrolledAsync(userId, dto.CourseId))
+                    return Result<EnrollmentDto>.Failure("User is already enrolled in this course");
+
                 var enrollment = new Enrollment(userId, dto.CourseId);
 
                 await _unitOfWork.Enrollments.AddAsync(enrollment);
                 await _unitOfWork.SaveChangesAsync();
 
-                var enrollmentDto = _mapper.Map<EnrollmentDto>(enrollment);
+                var enrollmentDto = MapToEnrollmentDto(enrollment);
                 return Result<EnrollmentDto>.Success(enrollmentDto);
             }
             catch (Exception ex)
@@ -97,12 +97,6 @@ namespace SimpleLMS.Application.Services
                     return Result.Failure("Progress percentage must be between 0 and 100");
 
                 enrollment.UpdateProgress(dto.ProgressPercentage);
-
-                // Auto-complete if progress is 100%
-                if (dto.ProgressPercentage >= 100)
-                {
-                    enrollment.Complete();
-                }
 
                 await _unitOfWork.Enrollments.UpdateAsync(enrollment);
                 await _unitOfWork.SaveChangesAsync();
@@ -163,6 +157,22 @@ namespace SimpleLMS.Application.Services
             {
                 return Result.Failure($"Failed to cancel enrollment: {ex.Message}");
             }
+        }
+
+        private static EnrollmentDto MapToEnrollmentDto(Enrollment enrollment)
+        {
+            return new EnrollmentDto
+            {
+                Id = enrollment.Id,
+                UserId = enrollment.UserId,
+                UserName = enrollment.User?.FullName ?? string.Empty,
+                CourseId = enrollment.CourseId,
+                CourseTitle = enrollment.Course?.Title ?? string.Empty,
+                EnrolledAt = enrollment.EnrolledAt,
+                Status = enrollment.Status.ToString(),
+                CompletedAt = enrollment.CompletedAt,
+                ProgressPercentage = enrollment.ProgressPercentage
+            };
         }
     }
 }

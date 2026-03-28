@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using SimpleLMS.Application.Common;
+﻿using SimpleLMS.Application.Common;
 using SimpleLMS.Application.DTOs.Lessons;
 using SimpleLMS.Application.Interfaces.Repositories;
 using SimpleLMS.Application.Interfaces.Services;
@@ -14,12 +13,10 @@ namespace SimpleLMS.Application.Services
     public class LessonService : ILessonService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public LessonService(IUnitOfWork unitOfWork, IMapper mapper)
+        public LessonService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<LessonDto>> GetByIdAsync(Guid id)
@@ -28,14 +25,14 @@ namespace SimpleLMS.Application.Services
             if (lesson == null)
                 return Result<LessonDto>.Failure("Lesson not found");
 
-            var lessonDto = _mapper.Map<LessonDto>(lesson);
+            var lessonDto = MapToLessonDto(lesson);
             return Result<LessonDto>.Success(lessonDto);
         }
 
         public async Task<Result<IEnumerable<LessonDto>>> GetLessonsByCourseAsync(Guid courseId)
         {
             var lessons = await _unitOfWork.Lessons.GetLessonsByCourseAsync(courseId);
-            var lessonDtos = _mapper.Map<IEnumerable<LessonDto>>(lessons);
+            var lessonDtos = lessons.Select(MapToLessonDto).ToList();
             return Result<IEnumerable<LessonDto>>.Success(lessonDtos);
         }
 
@@ -63,7 +60,7 @@ namespace SimpleLMS.Application.Services
                 await _unitOfWork.Lessons.AddAsync(lesson);
                 await _unitOfWork.SaveChangesAsync();
 
-                var lessonDto = _mapper.Map<LessonDto>(lesson);
+                var lessonDto = MapToLessonDto(lesson);
                 return Result<LessonDto>.Success(lessonDto);
             }
             catch (Exception ex)
@@ -93,7 +90,7 @@ namespace SimpleLMS.Application.Services
                 await _unitOfWork.Lessons.UpdateAsync(lesson);
                 await _unitOfWork.SaveChangesAsync();
 
-                var lessonDto = _mapper.Map<LessonDto>(lesson);
+                var lessonDto = MapToLessonDto(lesson);
                 return Result<LessonDto>.Success(lessonDto);
             }
             catch (Exception ex)
@@ -129,6 +126,21 @@ namespace SimpleLMS.Application.Services
             {
                 return Result.Failure($"Failed to delete lesson: {ex.Message}");
             }
+        }
+
+        private static LessonDto MapToLessonDto(Lesson lesson)
+        {
+            return new LessonDto
+            {
+                Id = lesson.Id,
+                Title = lesson.Title,
+                Content = lesson.Content,
+                VideoUrl = lesson.VideoUrl,
+                Order = lesson.Order,
+                DurationMinutes = lesson.DurationMinutes,
+                CourseId = lesson.CourseId,
+                CreatedAt = lesson.CreatedAt
+            };
         }
     }
 }

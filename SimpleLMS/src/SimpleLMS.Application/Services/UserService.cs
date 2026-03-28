@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using SimpleLMS.Application.Common;
+﻿using SimpleLMS.Application.Common;
 using SimpleLMS.Application.DTOs.Users;
 using SimpleLMS.Application.Interfaces.Repositories;
 using SimpleLMS.Application.Interfaces.Services;
@@ -17,12 +16,10 @@ namespace SimpleLMS.Application.Services
     public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
+        public UserService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<UserDto>> GetByIdAsync(Guid id)
@@ -31,14 +28,14 @@ namespace SimpleLMS.Application.Services
             if (user == null)
                 return Result<UserDto>.Failure("User not found");
 
-            var userDto = _mapper.Map<UserDto>(user);
+            var userDto = MapToUserDto(user);
             return Result<UserDto>.Success(userDto);
         }
 
         public async Task<Result<IEnumerable<UserDto>>> GetAllAsync()
         {
             var users = await _unitOfWork.Users.GetAllAsync();
-            var userDtos = _mapper.Map<IEnumerable<UserDto>>(users);
+            var userDtos = users.Select(MapToUserDto).ToList();
             return Result<IEnumerable<UserDto>>.Success(userDtos);
         }
 
@@ -68,7 +65,7 @@ namespace SimpleLMS.Application.Services
                 await _unitOfWork.Users.AddAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                var userDto = _mapper.Map<UserDto>(user);
+                var userDto = MapToUserDto(user);
                 return Result<UserDto>.Success(userDto);
             }
             catch (BusinessRuleViolationException ex)
@@ -99,7 +96,7 @@ namespace SimpleLMS.Application.Services
                 await _unitOfWork.Users.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                var userDto = _mapper.Map<UserDto>(user);
+                var userDto = MapToUserDto(user);
                 return Result<UserDto>.Success(userDto);
             }
             catch (BusinessRuleViolationException ex)
@@ -148,7 +145,7 @@ namespace SimpleLMS.Application.Services
                 if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                     return Result<LoginResponseDto>.Failure("Invalid username or password");
 
-                var userDto = _mapper.Map<UserDto>(user);
+                var userDto = MapToUserDto(user);
 
                 // JWT token will be generated in API Controller layer
                 var response = new LoginResponseDto
@@ -163,6 +160,20 @@ namespace SimpleLMS.Application.Services
             {
                 return Result<LoginResponseDto>.Failure($"Login failed: {ex.Message}");
             }
+        }
+
+        private static UserDto MapToUserDto(User user)
+        {
+            return new UserDto
+            {
+                Id = user.Id,
+                UserName = user.Username,
+                Email = user.Email,
+                FullName = user.FullName,
+                Role = user.Role.ToString(),
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt
+            };
         }
     }
 }
