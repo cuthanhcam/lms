@@ -31,6 +31,9 @@ ipch/
 # JetBrains Rider / IntelliJ
 .idea/
 *.iml
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
 
 # ReSharper
 _ReSharper*/
@@ -105,27 +108,37 @@ coverage/
 node_modules/
 dist/
 build/
+**/dist/
+**/build/
 .vite/
 .eslintcache
 *.tsbuildinfo
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
+
+# Keep lock file for deterministic builds
+!package-lock.json
 
 # ---------------------------------------------------------------------------
 # Database Files & Local Storage
 # ---------------------------------------------------------------------------
 
-migrations/
 *.db
 *.sqlite
 *.mdf
 *.ldf
+# Uncomment if you DON'T want to track migrations
+# migrations/
 
 # ---------------------------------------------------------------------------
 # Configuration & Secrets (DO NOT COMMIT)
 # ---------------------------------------------------------------------------
+
+# Secrets
+secrets.json
+*.secret.json
+*.vault.json
 
 .env
 .env.*
@@ -133,8 +146,9 @@ migrations/
 *.cert
 *.key
 
-# Ignore all appsettings files (base + environment-specific) to avoid leaking secrets
-appsettings*.json
+# Keep base appsettings and ignore environment-specific variants
+appsettings.*.json
+!appsettings.json
 
 # ---------------------------------------------------------------------------
 # Docker & DevOps
@@ -145,7 +159,9 @@ docker-compose.override.yaml
 .env.docker
 .docker/
 Dockerfile.local
-.dockerignore
+
+# Keep dockerignore in source control
+!.dockerignore
 
 # Terraform
 .terraform/
@@ -170,8 +186,9 @@ $RECYCLE.BIN/
 # ---------------------------------------------------------------------------
 
 *.log
-logs/
-Logs/
+[Ll]ogs/
+*.ndjson
+*.seq
 !*.important.log
 
 # ---------------------------------------------------------------------------
@@ -199,8 +216,17 @@ wwwroot/service-worker.js
 wwwroot/service-worker-assets.js
 
 # ---------------------------------------------------------------------------
+# .NET Local Tools & Benchmark Artifacts
+# ---------------------------------------------------------------------------
+
+.dotnet/
+BenchmarkDotNet.Artifacts/
+
+# ---------------------------------------------------------------------------
 # Miscellaneous
 # ---------------------------------------------------------------------------
 
 *.meta
 *.cache
+temp/
+ref/

@@ -4,7 +4,7 @@ Thank you for your interest in contributing.
 
 ## How To Contribute
 
-1. Fork the repository and create a branch from develop.
+1. Fork the repository and create a branch from the default branch.
 2. Follow the commit format in COMMIT_MESSAGE_GUIDELINES.md.
 3. Keep changes focused and easy to review.
 4. Add or update tests when behavior changes.
@@ -14,23 +14,21 @@ Thank you for your interest in contributing.
 
 Use one of the following prefixes:
 
-- feature/<short-description>
-- bugfix/<short-description>
-- chore/<short-description>
-- docs/<short-description>
+- feature/[short-description]
+- bugfix/[short-description]
+- chore/[short-description]
+- docs/[short-description]
 
 ## Local Validation
 
 Before opening a PR, run:
 
-- dotnet --version
-- dotnet build LMS/LMS.slnx
-- dotnet build SimpleLMS/SimpleLMS.slnx
+- verify your local tooling/runtime version
+- run the project build command (example: [build-command])
 
 If your change includes tests, also run:
 
-- dotnet test LMS/LMS.slnx
-- dotnet test SimpleLMS/SimpleLMS.slnx
+- run the project test command (example: [test-command])
 
 ## Pull Request Expectations
 
