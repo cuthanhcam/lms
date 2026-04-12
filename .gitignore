@@ -79,6 +79,8 @@ artifacts/
 
 packages/
 !packages/repositories.config
+!LMS.Portal/packages/
+!LMS.Portal/packages/**
 *.nupkg
 .nuget/
 
