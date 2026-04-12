@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "radix-nova",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@lmsportal/ui/components",
+    "utils": "@lmsportal/ui/lib/utils",
+    "hooks": "@lmsportal/ui/hooks",
+    "lib": "@lmsportal/ui/lib",
+    "ui": "@lmsportal/ui/components"
+  }
+}
